@@ -6,7 +6,7 @@
 </template>
 <style scoped>
 .header{
-  background-color: aliceblue;
+  background-color: #BD4B4B;
   padding: 10px;
   display: block;
   margin:0;
@@ -14,9 +14,11 @@
 }
 .title{
   display:inline-block;
-  margin-right: 20px;
+  margin: 5px 20px 5px 0px;
+  font-size:2em;
 }
 .counter{
   display: inline-block;
+  font-size:1.5rem;
 }
 </style>
