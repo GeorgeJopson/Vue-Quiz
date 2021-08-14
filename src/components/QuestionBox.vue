@@ -16,7 +16,7 @@
   background-color: #EEEEEE;
 }
 .question-box{
-  margin:10px;
+  margin:20px 10vw 10px 10vw;
   background-color:#EFB7B7;
   border-radius: 3px;
   padding: 10px;
