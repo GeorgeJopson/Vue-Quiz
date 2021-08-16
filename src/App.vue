@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <Header/>
-    <QuestionBox/>
+    <QuestionBox
+    v-if='questions.length'
+    :currentQuestion='questions[index]'
+    :next="next"
+    />
   </div>
 </template>
 
@@ -13,6 +17,26 @@ export default {
   components: {
     Header,
     QuestionBox
+  },
+  data(){
+    return{
+      questions: [],
+      index:0
+    }
+  },
+  methods:{
+    next(){
+      this.index++
+    }
+  },
+  mounted: function(){
+    fetch('https://opentdb.com/api.php?amount=10&category=18&type=multiple',{
+      method:'get'
+    }).then((response) =>{
+      return response.json()
+    }).then((jsonData)=>{
+      this.questions= jsonData.results
+    });
   }
 }
 </script>
