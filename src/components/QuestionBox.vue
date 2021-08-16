@@ -7,13 +7,14 @@
       <p v-for='(answer,index) in shuffledAnswers' 
       :key='index' 
       v-html="answer"
-      @click="selectAnswer(index)"
+      @click="!answered ? selectAnswer(index) : ''"
       class="answer"
-      :class="[selectedIndex===index ? 'selected' : '']">
+      :class="[answerClass(index)]">
       </p>
     </div>
     <button class="btn blue"
     @click="submitAnswer"
+    :disabled="selectedIndex===null || answered===true"
     >
       Submit
     </button>
@@ -32,19 +33,21 @@ export default{
     return {
       selectedIndex:null,
       shuffledAnswers:[],
-      correctIndex:null
+      correctIndex:null,
+      answered:false
     }
   }, 
   methods:{
     selectAnswer(index){
-      this.selectedIndex=index
+      this.selectedIndex=index;
     },
     submitAnswer(){
       let isCorrect =false;
       if (this.selectedIndex===this.correctIndex){
         isCorrect=true;
       }
-      this.increment(isCorrect)
+      this.increment(isCorrect);
+      this.answered=true;
     },
     shuffleAnswers(){
       let answers=[...this.currentQuestion.incorrect_answers,this.currentQuestion.correct_answer]
@@ -57,6 +60,21 @@ export default{
       }
       this.shuffledAnswers=newShuffledAnswers
       this.correctIndex=this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer)
+    },
+    answerClass(index){
+      let answerClass=''
+      if (this.answered){
+        if(this.correctIndex===index){
+          answerClass='correct'
+        }else if(this.selectedIndex===index){
+          answerClass='incorrect'
+        }
+      }else{
+        if(this.selectedIndex===index){
+          answerClass='selected'
+        }
+      }
+      return answerClass
     }
   },
   computed:{
@@ -70,8 +88,9 @@ export default{
     currentQuestion:{
       immediate:true,
       handler(){
-        this.selectedIndex=null
-        this.shuffleAnswers()
+        this.selectedIndex=null;
+        this.shuffleAnswers();
+        this.answered=false;
       }
     }
   }
@@ -150,6 +169,7 @@ export default{
   border:none;
   border-radius:3px;
   transition: background-color 0.1s;
+  cursor:pointer;
 }
 
 .btn.blue{
