@@ -1,9 +1,17 @@
 <template>
   <div class="header">
     <h1 class="title">My Quiz</h1>
-    <h3 class="counter">Counter: 4/10</h3>
+    <h3 class="counter">Counter: {{numCorrect}}/{{numTotal}}</h3>
   </div>
 </template>
+<script>
+export default{
+  props:{
+    numCorrect:Number,
+    numTotal:Number
+  }
+}
+</script>
 <style scoped>
 .header{
   background-color: #BD4B4B;

@@ -4,10 +4,19 @@
     <h1 class="question" v-html="currentQuestion.question"></h1>
     <hr class="break">
     <div class="answer-container">
-      <p v-for='(answer,index) in answers' :key='index' class="answer" v-html="answer">
+      <p v-for='(answer,index) in shuffledAnswers' 
+      :key='index' 
+      v-html="answer"
+      @click="selectAnswer(index)"
+      class="answer"
+      :class="[selectedIndex===index ? 'selected' : '']">
       </p>
     </div>
-    <button class="btn blue">Submit</button>
+    <button class="btn blue"
+    @click="submitAnswer"
+    >
+      Submit
+    </button>
     <button class="btn green" @click='next'>Next</button>
     </div>
   </div>
@@ -16,13 +25,54 @@
 export default{
   props:{
     currentQuestion:Object,
-    next:Function
+    next:Function,
+    increment:Function
+  },
+  data(){
+    return {
+      selectedIndex:null,
+      shuffledAnswers:[],
+      correctIndex:null
+    }
+  }, 
+  methods:{
+    selectAnswer(index){
+      this.selectedIndex=index
+    },
+    submitAnswer(){
+      let isCorrect =false;
+      if (this.selectedIndex===this.correctIndex){
+        isCorrect=true;
+      }
+      this.increment(isCorrect)
+    },
+    shuffleAnswers(){
+      let answers=[...this.currentQuestion.incorrect_answers,this.currentQuestion.correct_answer]
+      let numOfAnswers= answers.length;
+      let newShuffledAnswers=[];
+      for(let count=0; count<numOfAnswers;count++){
+        let randomNum=Math.floor(Math.random() * answers.length);
+        newShuffledAnswers.push(answers[randomNum]);
+        answers.splice(randomNum,1);
+      }
+      this.shuffledAnswers=newShuffledAnswers
+      this.correctIndex=this.shuffledAnswers.indexOf(this.currentQuestion.correct_answer)
+    }
   },
   computed:{
     answers(){
       let answers= [...this.currentQuestion.incorrect_answers]
       answers.push(this.currentQuestion.correct_answer)
       return answers
+    }
+  },
+  watch:{
+    currentQuestion:{
+      immediate:true,
+      handler(){
+        this.selectedIndex=null
+        this.shuffleAnswers()
+      }
     }
   }
 }
@@ -64,6 +114,12 @@ export default{
   max-width:400px;
   margin-top:10px;
   margin-bottom:10px;
+  transition: background-color 0.3s;
+}
+
+.answer:hover{
+  background-color: #EEEEEE;
+  cursor: pointer;
 }
 
 .answer:first-child{
@@ -75,12 +131,25 @@ export default{
   border-bottom-right-radius: 10px;
 }
 
+.answer.selected{
+  background-color: #008CBA;
+}
+
+.answer.correct{
+  background-color: #4CAF50;
+}
+
+.answer.incorrect{
+  background-color: #DC3546;
+}
+
 .btn{
   padding: 8px;
   margin:5px;
   font-size:1em;
   border:none;
   border-radius:3px;
+  transition: background-color 0.1s;
 }
 
 .btn.blue{
