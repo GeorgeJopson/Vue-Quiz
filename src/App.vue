@@ -7,7 +7,7 @@
     <QuestionBox
     v-if='questions.length'
     :currentQuestion='questions[index]'
-    :next='next'
+    :newQuestion='newQuestion'
     :increment='increment'
     />
   </div>
@@ -27,28 +27,37 @@ export default {
       questions: [],
       index:0,
       numCorrect:0,
-      numTotal:0
+      numTotal:0,
+      questionCount:0
     }
   },
-  methods:{
-    next(){
-      this.index++
-    },
+  methods: {
     increment(isCorrect){
       if(isCorrect){
         this.numCorrect++;
       }
       this.numTotal++;
+    },
+    newQuestion(){
+      this.index++;
+      this.questionCount++;
+      if(this.questionCount%10==0){
+        this.moreQuestions();
+      }
+    },
+    moreQuestions(){
+      fetch('https://opentdb.com/api.php?amount=10&category=18&type=multiple',{
+        method:'get'
+      }).then((response) =>{
+        return response.json()
+      }).then((jsonData)=>{
+        this.questions= jsonData.results
+      });
+      this.index=0;
     }
   },
   mounted: function(){
-    fetch('https://opentdb.com/api.php?amount=10&category=18&type=multiple',{
-      method:'get'
-    }).then((response) =>{
-      return response.json()
-    }).then((jsonData)=>{
-      this.questions= jsonData.results
-    });
+    this.moreQuestions();
   }
 }
 </script>

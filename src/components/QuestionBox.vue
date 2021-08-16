@@ -18,7 +18,9 @@
     >
       Submit
     </button>
-    <button class="btn green" @click='next'>Next</button>
+    <button class="btn green"
+    @click='newQuestion'
+    >Next</button>
     </div>
   </div>
 </template>
@@ -26,7 +28,7 @@
 export default{
   props:{
     currentQuestion:Object,
-    next:Function,
+    newQuestion:Function,
     increment:Function
   },
   data(){
